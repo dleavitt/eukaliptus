@@ -24,31 +24,10 @@
     }
     FB.login(function(response) {
       if (response.session) {
-        fixSession(JSON.stringify(response.session), targetUrl);
         } else {
           //pending to do when not logged in
         }
     }, {perms: perms});
   }
 
-  var fixSession = function(fbSession, targetUrl) {
-    $("body").prepend('<form id="fixSession"></form>');
-
-    var f = $('form')[0];
-    f.method = 'POST';
-    f.action = "/cookie_fix";
-    var m = document.createElement('input');
-    m.setAttribute('type', 'hidden');
-    m.setAttribute('name', '_session_id');
-    m.setAttribute('value', fbSession);
-    f.appendChild(m);
-
-    m = document.createElement('input');
-    m.setAttribute('type', 'hidden');
-    m.setAttribute('name', 'redirect_to');
-    m.setAttribute('value', targetUrl);
-    f.appendChild(m);
-
-    f.submit();
-  }
 </script>
