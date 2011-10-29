@@ -20,11 +20,13 @@ module Eukaliptus
       
       # Serve /channel.html
       if env['PATH_INFO'] == '/channel.html'
+        @response.headers.delete "X-Cascade"
         @response.headers['Content-Type'] = 'text/html'
-        @response.body = ["<script src='http#{'s' if @request.ssl?}://connect.facebook.net/en_US/all.js'></script>"]
+        body = "<script src='http#{'s' if @request.ssl?}://connect.facebook.net/en_US/all.js'></script>"
+        [200, @response.headers, [body]]
+      else
+        @response.finish
       end
-      p @response
-      @response.finish
     end
   end
 end
