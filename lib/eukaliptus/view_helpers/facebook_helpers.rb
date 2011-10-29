@@ -1,22 +1,52 @@
 module Eukaliptus
   module FacebookHelpers
     
-    # Renders the HTML + JS that enables the app to log in to Facebook using
-    # the Javascript method.
-    #
-    # Accepts the permissions that your application needs to work.
-    # Use the second parameter to inject some JS that will be executed in fbAsyncInit.
-    #
-    # Use it one time in your layout header for all pages, or add it to individual templates 
-    # to ask the user for different permissions depending on the context, page, etc.
     def fb_init(options = {})
-      perms = (options[:perms] || %w{email publish_stream}).join(",")
-      locale = options[:locale] || "en_US"
-
+      locale = options.delete(:locale) || "en_US"
+      callback = options.delete(:callback)
+      
+      defaults = { 
+        :app_id => Facebook::APP_ID.to_s,
+        :status => true,
+        :cookie => true,
+        :xfbml => true,
+        :oauth => true, 
+        # TODO: channelURL middleware
+        :channel_url => "#{root_url}channel.html", 
+      }
+      
+      options.reverse_merge!(defaults).keys.each do |key|
+        options[key.to_s.camelize(:lower)] = options.delete(key)
+      end
+      
       template = Erubis::Eruby.new File.new(File.dirname(__FILE__) + "/../templates/fb_init.erb").read
-      js = template.result(:perms => perms, :locale => locale)
+      js = template.result  :locale => locale, 
+                            :options => options, 
+                            :callback => callback
       
       js.html_safe
+    end
+    
+    def like_button(data_opts = {}, opts = {})
+      data_opts.to_options!.reverse_merge!({
+        href:             url_for(only_path: false),
+        send:             true,
+        layout:           'button_count',
+        width:            115,
+        :'show-faces' =>  false,
+        font:             'arial',
+      })
+
+      opts.to_options!.reverse_merge!({
+        class: 'fb-like',
+      })
+      data_opts.each { |key,val| opts["data-#{key}"] = val }
+
+      content_tag :div, '', opts 
+    end
+    
+    def fb_photo_url(id, type="square")
+      "https://graph.facebook.com/#{id}/picture?type=#{type}"
     end
     
   end

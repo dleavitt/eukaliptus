@@ -15,6 +15,7 @@ require 'eukaliptus/view_helpers/facebook_helpers'
 
 module ::Facebook
   APP_ID = '123456' 
+  HOST = 'http://www.example.com'
 end
 
 MiniTest::Unit.autorun

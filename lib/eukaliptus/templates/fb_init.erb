@@ -1,33 +1,29 @@
 <div id="fb-root"></div>
 <script type="text/javascript">
   window.fbAsyncInit = function() {
-    FB.init({
-        appId: '<%= Facebook::APP_ID.to_s %>',
-        status: true,
-        cookie: true,
-        xfbml: true
-    });
-
-    FB.Canvas.setAutoResize(100);
-  };
-
-  (function() {
-    var e = document.createElement('script'); e.async = true;
-    e.src = document.location.protocol +
-    '//connect.facebook.net/<%= locale %>/all.js';
-    document.getElementById('fb-root').appendChild(e);
-  }());
-
-  var login = function(targetUrl, perms) {
-    if (perms == null) {
-      perms = "<%= perms %>"
+    // hack to stop FB from wrecking our SSL
+    // despite the fact that it requires SSL
+    if (document.location.protocol == 'https') {
+      FB._https = true;
     }
-    FB.login(function(response) {
-      if (response.session) {
-        } else {
-          //pending to do when not logged in
-        }
-    }, {perms: perms});
-  }
+    
+    FB.init(<%= options.to_json.html_safe %>);
+    
+    FB.Canvas.setAutoGrow(101);
+    
+    // wrap document.ready in the callback from this
+    <%= callback || 'fb_init' %>();
+  };
+  
+  (function(d){
+     var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all.js";
+     d.getElementsByTagName('head')[0].appendChild(js);
+   }(document));
 
+   function fb_init() {
+     
+   }
 </script>
+
