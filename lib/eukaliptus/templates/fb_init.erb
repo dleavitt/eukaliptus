@@ -9,7 +9,9 @@
     
     FB.init(<%= options.to_json.html_safe %>);
     
-    FB.Canvas.setAutoGrow(101);
+    // Too buggy to include by default =/
+    // thanks again FB
+    // FB.Canvas.setAutoGrow(101);
     
     // wrap document.ready in the callback from this
     <%= callback || 'fb_init' %>();
